@@ -22,6 +22,12 @@ export default defineConfig({
   },
   renderer: {
     root: 'src/renderer',
+    // 프로젝트가 마운트 볼륨(/Volumes/...) 위에 있어 native FS 이벤트가 누락된다.
+    // 폴링으로 전환해 파일 변경(특히 CSS HMR)이 누락 없이 감지되게 한다.
+    // 트레이드오프: 폴링은 약간의 CPU를 더 쓴다. 로컬 디스크로 옮기면 제거해도 된다.
+    server: {
+      watch: { usePolling: true, interval: 300 },
+    },
     build: {
       outDir: 'dist/renderer',
       rollupOptions: {

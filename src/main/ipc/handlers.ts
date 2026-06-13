@@ -10,6 +10,7 @@ import {
   hideTerminalWindow,
   showTerminalWindow,
 } from '../windows/terminal-window';
+import { closeSettingsWindow } from '../windows/settings-window';
 
 export function registerIpcHandlers(): void {
   // ── 터미널 입력(renderer → main) ──
@@ -27,6 +28,9 @@ export function registerIpcHandlers(): void {
 
   // ── 창 숨김 요청 ──
   ipcMain.on(IPC.WINDOW_HIDE, () => hideTerminalWindow());
+
+  // ── 설정 창 닫기 요청 ──
+  ipcMain.on(IPC.SETTINGS_CLOSE, () => closeSettingsWindow());
 
   // ── 설정 조회 ──
   ipcMain.handle(IPC.SETTINGS_GET, () => loadSettings());

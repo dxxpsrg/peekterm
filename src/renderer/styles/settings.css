@@ -246,12 +246,25 @@ body {
   font-size: 10px;
 }
 
+/* 저장 실패 메시지 — 주의를 끌도록 붉은 톤으로 표시한다. */
+.hint-error {
+  color: #ff6b6b;
+}
+
 /* ── 푸터 ── */
+/* 닫기는 왼쪽 끝, 기본값·저장은 오른쪽 그룹으로 분리 배치한다. */
 .footer {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
+  align-items: center;
   gap: 10px;
   padding: 16px 22px 20px;
+}
+
+/* 오른쪽 액션 그룹(기본값 · 저장) */
+.footer-actions {
+  display: flex;
+  gap: 10px;
 }
 
 .btn-ghost {
@@ -291,9 +304,4 @@ body {
 
 .btn-primary:active {
   transform: translateY(0);
-}
-
-.btn-saved {
-  background: linear-gradient(135deg, #40c057, #2fb344);
-  box-shadow: 0 4px 14px rgba(64, 192, 87, 0.35);
 }

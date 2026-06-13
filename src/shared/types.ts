@@ -54,6 +54,7 @@ export interface PeekTermAPI {
   getSettings: () => Promise<AppSettings>; // 현재 설정 조회
   saveSettings: (settings: AppSettings) => Promise<AppSettings>; // 설정 저장(병합된 결과 반환)
   onSettingsApply: (cb: (settings: AppSettings) => void) => void; // 설정 즉시 적용 수신
+  closeSettings: () => void; // 설정 창 닫기 요청
 }
 
 // 렌더러 전역(window.api) 타입 보강.

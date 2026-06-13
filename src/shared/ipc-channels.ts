@@ -9,4 +9,5 @@ export const IPC = {
   SETTINGS_GET: 'settings:get', // (renderer→main, invoke) 설정 조회
   SETTINGS_SAVE: 'settings:save', // (renderer→main, invoke) 설정 저장
   SETTINGS_APPLY: 'settings:apply', // (main→renderer) 설정 즉시 적용
+  SETTINGS_CLOSE: 'settings:close', // (renderer→main) 설정 창 닫기 요청
 } as const;

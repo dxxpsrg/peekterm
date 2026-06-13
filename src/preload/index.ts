@@ -26,6 +26,7 @@ const api: PeekTermAPI = {
     ipcRenderer.removeAllListeners(IPC.SETTINGS_APPLY);
     ipcRenderer.on(IPC.SETTINGS_APPLY, (_e, s: AppSettings) => cb(s));
   },
+  closeSettings: () => ipcRenderer.send(IPC.SETTINGS_CLOSE),
 };
 
 contextBridge.exposeInMainWorld('api', api);

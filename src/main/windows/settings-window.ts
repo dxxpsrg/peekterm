@@ -38,3 +38,12 @@ export function openSettingsWindow(): void {
     settingsWin = null;
   });
 }
+
+// 설정 창을 닫는다 — 렌더러의 "닫기"/"저장" 버튼에서 호출된다.
+// 이미 닫혔거나 없는 경우는 무시(방어적 처리). close 시 위의 'closed' 핸들러가
+// 참조를 정리하므로, 다음에 열 때 openSettingsWindow가 새로 생성한다.
+export function closeSettingsWindow(): void {
+  if (settingsWin && !settingsWin.isDestroyed()) {
+    settingsWin.close();
+  }
+}

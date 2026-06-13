@@ -3,7 +3,6 @@
   "version": "2.0.0",
   "description": "맥OS 메뉴바 사이드패널 터미널 (Electron + React)",
   "main": "dist/main/index.js",
-  "author": "dxxpsr",
   "license": "MIT",
   "scripts": {
     "dev": "electron-vite dev",
@@ -15,7 +14,7 @@
     "typecheck": "tsc --noEmit"
   },
   "build": {
-    "appId": "com.dxxpsr.peekterm",
+    "appId": "com.peekterm.app",
     "productName": "peekterm",
     "directories": {
       "output": "release"

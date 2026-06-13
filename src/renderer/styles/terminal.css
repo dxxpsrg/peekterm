@@ -18,7 +18,7 @@ body,
 }
 
 body {
-  background: #1e1e2e; /* xterm 초기화 전 깜빡임 방지 + 상하 여백 영역의 배경색 */
+  background: #292c33; /* xterm 초기화 전 깜빡임 방지 + 상하 여백 영역의 배경색 */
   overflow: hidden;
 }
 

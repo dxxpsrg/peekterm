@@ -32,7 +32,7 @@ export const DEFAULT_SETTINGS: AppSettings = {
 // 라이트는 순백(#fff) 대신 눈부심을 줄인 따뜻한 오프화이트(크림톤)를 사용한다.
 export const TERMINAL_THEMES: Record<ThemeMode, TerminalTheme> = {
   // 다크: 밝은 전경(#cdd6f4) 대비 한 단계 흐린 회색(#6c7086)으로 제안을 표시.
-  dark: { background: '#1e1e2e', foreground: '#cdd6f4', cursor: '#f5e0dc', brightBlack: '#6c7086' },
+  dark: { background: '#292c33', foreground: '#cdd6f4', cursor: '#f5e0dc', brightBlack: '#6c7086' },
   // 라이트: 어두운 전경(#4c4f69)보다 "밝은" 회색(#9ca0b0)이라야 흐리게 보인다.
   light: { background: '#f4ecd8', foreground: '#4c4f69', cursor: '#1e66f5', brightBlack: '#9ca0b0' },
 };

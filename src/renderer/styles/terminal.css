@@ -18,16 +18,25 @@ body,
 }
 
 body {
-  background: #1e1e2e; /* xterm 초기화 전 깜빡임 방지용 배경 */
+  background: #1e1e2e; /* xterm 초기화 전 깜빡임 방지 + 상하 여백 영역의 배경색 */
   overflow: hidden;
 }
 
-/* xterm 컨테이너 — 창 전체에서 약간의 패딩만 둔다. */
+/* 루트를 플렉스로 만들어 터미널을 세로 중앙에 배치한다.
+   터미널 높이를 창보다 작게 제한했을 때, 남는 60px가 위아래로 30px씩 나뉘어 여백이 된다. */
+#root {
+  display: flex;
+  align-items: center;
+}
+
+/* xterm 컨테이너 — 창 높이(100vh)에서 상하 합 60px를 비우고 그 안을 채운다.
+   상하 여백 = height 제한 + #root 세로 중앙정렬, 좌우 여백 = padding 8px.
+   box-sizing: border-box라 좌우 padding만큼 내부가 줄고, FitAddon이 행/열 수를 재계산한다. */
 .terminal-container {
   width: 100vw;
-  height: 100vh;
+  height: calc(100vh - 60px);
   box-sizing: border-box;
-  padding: 8px;
+  padding: 0 8px;
 }
 
 /* xterm 내부 요소가 컨테이너 높이를 가득 채우도록. */

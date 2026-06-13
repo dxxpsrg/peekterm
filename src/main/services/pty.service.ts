@@ -13,7 +13,11 @@ const shell = process.env.SHELL || 'zsh';
 // 셸 프로세스를 생성하고 출력/종료 콜백을 연결한다.
 function spawn(): void {
   ptyProcess = pty.spawn(shell, ['--login'], {
-    name: 'xterm-color',
+    // TERM=xterm-256color로 설정해 셸에 256색 지원을 알린다.
+    // 'xterm-color'는 terminfo상 8색(0~7)만 지원하므로, zsh-autosuggestions의
+    // 기본 제안색(fg=8, ANSI 8번 = 회색)이 범위를 벗어나 적용되지 않고
+    // 전경색(흰색)으로 떨어지는 문제가 있었다. xterm.js는 256색을 지원한다.
+    name: 'xterm-256color',
     cols: 80, // 초기값 — 렌더러가 fit 후 resize로 정확히 맞춘다.
     rows: 24,
     cwd: os.homedir(),

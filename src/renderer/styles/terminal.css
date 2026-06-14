@@ -45,3 +45,25 @@ body {
 .terminal-container .xterm-screen {
   height: 100% !important;
 }
+
+/* 세로 스크롤바 스타일 — 기본 스크롤바 대신 얇고 반투명한 형태로 은은하게 표시한다.
+   xterm은 스크롤백 영역을 .xterm-viewport(overflow-y: scroll)로 처리하므로 이 요소를 대상으로 한다.
+   반투명 회색(rgba)을 써서 라이트/다크 배경 양쪽에 자연스럽게 묻어나도록 한다. Electron은 Chromium이라 Webkit 규칙으로 충분하다. */
+.terminal-container .xterm-viewport::-webkit-scrollbar {
+  width: 8px; /* 얇은 스크롤바 폭 */
+}
+
+.terminal-container .xterm-viewport::-webkit-scrollbar-track {
+  background: transparent; /* 트랙(배경 레일)은 보이지 않게 */
+}
+
+/* 스크롤 썸(잡는 막대) — 약간 어두운 회색에 투명도를 줘서 은은하게. */
+.terminal-container .xterm-viewport::-webkit-scrollbar-thumb {
+  background-color: rgba(128, 128, 128, 0.35);
+  border-radius: 4px;
+}
+
+/* 마우스를 올리면 살짝 진하게 해 조작 위치를 인지하기 쉽게 한다. */
+.terminal-container .xterm-viewport::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(128, 128, 128, 0.55);
+}

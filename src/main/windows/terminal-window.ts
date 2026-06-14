@@ -4,6 +4,7 @@ import { BrowserWindow, screen, app } from 'electron';
 import path from 'path';
 import { computeSidePanelBounds, Rect } from '@shared/bounds';
 import { enableMoveToActiveSpace } from '../services/macos-space.service';
+import { setAttention } from '../services/attention.service';
 
 let win: BrowserWindow | null = null;
 
@@ -57,6 +58,9 @@ export function createTerminalWindow(): BrowserWindow {
 // moveToActiveSpace가 발동해 창이 현재 활성 스페이스로 끌려온다(점프 없음).
 export function showTerminalWindow(): void {
   if (!win || win.isDestroyed()) return;
+  // 창을 여는 모든 경로(트레이 클릭·글로벌 핫키·second-instance)가 이 함수를 거치므로,
+  // 여기서 완료 알림 점을 해제한다 — 사용자가 결과를 보러 창을 열었다는 뜻이다.
+  setAttention(false);
   win.setBounds(getSidePanelBounds()); // 매 호출마다 위치 재계산.
   // Dock 미표시(에이전트) 앱은 그냥 show만으로 키보드 포커스를 못 받을 수 있어 강제로 앞으로 가져온다.
   if (process.platform === 'darwin') app.focus({ steal: true });

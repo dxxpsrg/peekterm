@@ -4,6 +4,7 @@ import { Tray, Menu, nativeImage, app, NativeImage } from 'electron';
 import path from 'path';
 import { showTerminalWindow } from './windows/terminal-window';
 import { openSettingsWindow } from './windows/settings-window';
+import { registerTrayForAttention } from './services/attention.service';
 
 let tray: Tray | null = null;
 
@@ -29,6 +30,9 @@ function loadTrayIcon(): NativeImage {
 export function createTray(): Tray {
   tray = new Tray(loadTrayIcon());
   tray.setToolTip('peekterm');
+
+  // 완료 알림(점) 서비스에 트레이 인스턴스를 등록한다.
+  registerTrayForAttention(tray);
 
   // 좌클릭 → 터미널 표시.
   tray.on('click', () => showTerminalWindow());

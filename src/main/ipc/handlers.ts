@@ -6,6 +6,7 @@ import * as pty from '../services/pty.service';
 import { loadSettings, saveSettings } from '../services/settings.service';
 import { registerHotkey } from '../services/hotkey.service';
 import {
+  assembleForDetection,
   containsAttentionSignal,
   hasSpinnerTitle,
   markDone,
@@ -39,14 +40,16 @@ export function registerIpcHandlers(): void {
   // ── 터미널 출력(main → renderer) ──
   // PTY는 창 가시성과 무관하게 살아 있고, 출력은 그때그때 터미널 창으로 전달한다.
   pty.onData((data) => {
-    getTerminalWindow()?.webContents.send(IPC.PTY_DATA, data);
+    getTerminalWindow()?.webContents.send(IPC.PTY_DATA, data); // 렌더러엔 원본 그대로(여기서 버퍼링 금지).
 
+    // 감지 경로는 청크 경계로 잘린 OSC 시퀀스를 이어붙여 사용한다(두 청크에 걸친 신호 누락 방지).
+    const assembled = assembleForDetection(data);
     // 주 신호: 제목 스피너로 에이전트(Claude Code 등)의 작업 중/완료를 추적한다.
     // 스피너가 보이면 깜빡임, 일정 시간 안 보이면 코랄 고정.
-    updateFromOutput(data);
+    updateFromOutput(assembled);
     // 보조 신호: 스피너를 쓰지 않고 완료 시 벨/OSC만 보내는 도구를 위해 그 신호도 완료로 인정한다.
     // (스피너가 함께 온 청크에서는 작업 중이므로 완료로 보지 않는다.)
-    if (!hasSpinnerTitle(data) && containsAttentionSignal(data)) markDone();
+    if (!hasSpinnerTitle(assembled) && containsAttentionSignal(assembled)) markDone();
   });
   pty.onExit((code) => {
     getTerminalWindow()?.webContents.send(IPC.PTY_EXIT, code);

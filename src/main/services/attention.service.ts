@@ -144,6 +144,31 @@ export function containsAttentionSignal(data: string): boolean {
   return containsBell(data); // terminal_bell 채널(순수 BEL)
 }
 
+// ── 청크 경계 보정(감지 경로 전용) ───────────────────────────────────────
+// PTY 출력은 임의 지점에서 청크로 쪼개진다. 우리가 감지하는 OSC 시퀀스(제목 스피너·알림 등)가
+// 두 청크에 걸치면 어느 쪽에도 완전한 시퀀스가 없어 한 프레임 놓칠 수 있다. 끝에 '종결되지 않은
+// ESC 시퀀스'가 있으면 그 부분만 다음 청크로 넘겨 이어붙인다. 완결 시퀀스/일반 텍스트는 넘기지
+// 않으므로 중복 처리(double-fire)가 없다.
+let carry = '';
+const MAX_CARRY = 4096; // 비정상적으로 긴 미완성 시퀀스 방어(이 이상이면 캐리하지 않고 흘려보냄).
+
+export function assembleForDetection(chunk: string): string {
+  let data = carry + chunk;
+  carry = '';
+  const lastEsc = data.lastIndexOf('\x1b');
+  if (lastEsc !== -1) {
+    const tail = data.slice(lastEsc);
+    const loneEsc = tail === '\x1b'; // 끝이 ESC 한 글자(시퀀스 시작 직전 잘림).
+    // OSC(ESC ])인데 종결자(BEL 또는 ST=ESC\)가 아직 없으면 미완성으로 본다.
+    const unterminatedOsc = tail.startsWith('\x1b]') && !/[\x07]|\x1b\\/.test(tail.slice(2));
+    if ((loneEsc || unterminatedOsc) && tail.length <= MAX_CARRY) {
+      carry = tail; // 미완성 꼬리만 다음 청크로 이월.
+      data = data.slice(0, lastEsc);
+    }
+  }
+  return data;
+}
+
 // ── 제목(title) 스피너 기반 작업 상태 추적 ────────────────────────────────
 // 가장 신뢰도 높은 신호다. Claude Code(v2.1.6+)는 작업 중(thinking)일 때 터미널 제목을
 // '브라유 스피너(⠋⠙⠹…) + Claude Code'로 매 프레임 갱신하고, 완료/대기 상태로 돌아오면
@@ -194,4 +219,5 @@ export function resetTrayState(): void {
   clearDoneTimer();
   trayState = 'idle';
   isWindowVisible = () => false;
+  carry = ''; // 청크 경계 보정 버퍼도 초기화(테스트 케이스 간 격리).
 }

@@ -3,6 +3,7 @@ import {
   containsBell,
   containsAttentionSignal,
   hasSpinnerTitle,
+  assembleForDetection,
   updateFromOutput,
   acknowledgeIfDone,
   setVisibilityGetter,
@@ -153,5 +154,33 @@ describe('updateFromOutput (스피너 디바운스 상태 머신)', () => {
     expect(getTrayState()).toBe('working');
     vi.advanceTimersByTime(1500);
     expect(getTrayState()).toBe('done'); // 그대로 완료까지 진행.
+  });
+});
+
+describe('assembleForDetection (청크 경계 보정)', () => {
+  // carry 버퍼를 케이스마다 초기화한다.
+  beforeEach(() => resetTrayState());
+
+  it('두 청크에 걸친 스피너 제목을 이어붙여 감지한다', () => {
+    // 첫 청크는 OSC 제목이 미완성이라 캐리로 넘겨 빈 문자열을 돌려준다.
+    const first = assembleForDetection('\x1b]0;⠋ Cla');
+    expect(hasSpinnerTitle(first)).toBe(false);
+    // 다음 청크에서 이어붙여 완성되면 스피너가 감지된다.
+    const second = assembleForDetection('ude Code\x07');
+    expect(hasSpinnerTitle(second)).toBe(true);
+  });
+
+  it('완결된 시퀀스는 그대로 통과시킨다(캐리 없음)', () => {
+    const out = assembleForDetection('hello\x1b]0;✳ Claude Code\x07world');
+    expect(out).toBe('hello\x1b]0;✳ Claude Code\x07world');
+  });
+
+  it('끝의 외톨이 ESC는 다음 청크로 이월한다', () => {
+    expect(assembleForDetection('abc\x1b')).toBe('abc'); // ESC 한 글자는 캐리.
+    expect(assembleForDetection('[31mx')).toBe('\x1b[31mx'); // 이어붙여 복원.
+  });
+
+  it('일반 텍스트는 변형 없이 그대로 돌려준다', () => {
+    expect(assembleForDetection('just plain output\n')).toBe('just plain output\n');
   });
 });

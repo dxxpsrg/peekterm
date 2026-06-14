@@ -2,6 +2,7 @@
 // 단일 zsh 세션을 main 프로세스에 상주시켜, 창이 숨겨져도 작업이 백그라운드에서 유지되게 한다.
 import * as pty from 'node-pty';
 import os from 'os';
+import { buildShellEnv } from './shell-env';
 
 let ptyProcess: pty.IPty | null = null;
 let onDataCb: ((data: string) => void) | null = null;
@@ -21,7 +22,8 @@ function spawn(): void {
     cols: 80, // 초기값 — 렌더러가 fit 후 resize로 정확히 맞춘다.
     rows: 24,
     cwd: os.homedir(),
-    env: process.env as { [key: string]: string },
+    // Electron 내부 변수(ELECTRON_*)·NODE_OPTIONS를 제거한 깨끗한 환경을 넘긴다.
+    env: buildShellEnv(process.env),
   });
 
   ptyProcess.onData((data) => onDataCb?.(data));
